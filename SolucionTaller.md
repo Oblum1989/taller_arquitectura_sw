@@ -1,6 +1,6 @@
 # Descripción general del diseño
 
-![Diagrama UML de Pedidos](pedidosUML.png)
+![Diagrama UML de Pedidos](DiagramaPedidos.drawio.png)
 
 ## 1. Capas del Sistema
 
@@ -14,7 +14,6 @@ Es la capa encargada de recibir peticiones de los usuarios o clientes (como una 
 
 - `PedidoController` → Maneja las solicitudes relacionadas con pedidos.
 - `ReporteController` → Genera reportes de pedidos y transportistas.
-- `TransportistaController` → Permite la asignación y gestión de transportistas.
 
 ### Capa de Aplicación (Servicios o Casos de Uso)
 
@@ -36,7 +35,6 @@ Contiene las entidades centrales del negocio y su comportamiento
   - `PedidoEstandar`, `PedidoExpress`, `PedidoProgramado` Implementan el cálculo específico del costo para cada tipo de envío.
 - `Transportista` (Interfaz) Define el comportamiento común para todos los transportistas.
   - `TransportistaInterno`, `TransportistaExterno` Implementan el comportamiento específico según el tipo de transportista.
-- `Estado` (Enum) Representa los posibles estados de un pedido: pendiente, en tránsito, entregado.
 - `PedidoFactory` (Crea instancias de pedidos) Facilita la creación de diferentes tipos de pedidos.
 
 ### Capa de Infraestructura
@@ -60,6 +58,7 @@ Maneja la interacción con la base de datos y servicios externos.
 - `GestorPedidos`: Coordina operaciones con pedidos sin implementar directamente la persistencia.
 - `PedidoController`: Gestiona las solicitudes del usuario sin contener lógica de negocio.
 - `RepositorioPedidosDB`: Se encarga exclusivamente de la persistencia de datos.
+- `RepositorioTransportistasDB`: Se encarga exclusivamente de la persistencia de datos.
 
 Cada clase tiene una única razón para cambiar, cumpliendo así con el SRP.
 
@@ -69,18 +68,20 @@ Cada clase tiene una única razón para cambiar, cumpliendo así con el SRP.
 - La interfaz `ITransportista` permite agregar nuevos tipos de transportistas sin alterar el sistema.
 - `PedidoFactory` facilita la creación de diferentes tipos de pedidos sin modificar el cliente.
 - La interfaz `IRepositorioPedidos` permite implementar diferentes mecanismos de persistencia sin cambiar la lógica de negocio.
+- La interfaz `IRepositorioTransportistas` permite implementar diferentes mecanismos de persistencia sin cambiar la lógica de negocio.
 
 ### 3. Principio de Sustitución de Liskov (LSP)
 
 - Las subclases de `Pedido` (PedidoEstandar, PedidoExpress, PedidoProgramado) pueden utilizarse donde se espera un objeto de tipo Pedido.
 - Las implementaciones de `ITransportista` (TransportistaInterno, TransportistaExterno) pueden ser utilizadas indistintamente.
 - Las implementaciones de `IRepositorioPedidos` pueden reemplazarse sin afectar el funcionamiento del sistema.
+- Las implementaciones de `IRepositorioTransportistas` pueden reemplazarse sin afectar el funcionamiento del sistema.
 
 ### 4. Principio de Segregación de Interfaces (ISP)
 
 - La interfaz `ITransportista` define solo los métodos necesarios para un transportista.
 - La interfaz `IRepositorioPedidos` incluye únicamente operaciones relacionadas con la persistencia de pedidos.
-- No hay interfaces "gordas" que obliguen a clases a implementar métodos que no necesitan.
+- La interfaz `IRepositorioTransportistas` incluye únicamente operaciones relacionadas con la persistencia de transportistas.
 
 ### 5. Principio de Inversión de Dependencias (DIP)
 
@@ -126,6 +127,7 @@ Cada clase tiene una única razón para cambiar, cumpliendo así con el SRP.
 - Las diferentes implementaciones de `Pedido` calculan su costo de manera específica.
 - Las implementaciones de `ITransportista` pueden tener comportamientos distintos al asignar pedidos.
 - La interfaz `IRepositorioPedidos` permite diferentes implementaciones de persistencia.
+- La interfaz `IRepositorioTransportistas` permite diferentes implementaciones de persistencia.
 
 ### 7. Fabricación Pura (Pure Fabrication)
 
@@ -162,7 +164,6 @@ Cada clase tiene una única razón para cambiar, cumpliendo así con el SRP.
 - **GestorPedidos** utiliza **AsignadorPedidos**.
 - **AsignadorPedidos** obtiene transportistas disponibles de **IRepositorioTransportistas**.
 - **AsignadorPedidos** selecciona el mejor transportista y le asigna el pedido.
-- Se actualizan tanto el pedido como el transportista en sus respectivos repositorios.
 
 
 **Actualización del Estado de un Pedido:**
