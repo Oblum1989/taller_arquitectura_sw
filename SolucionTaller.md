@@ -33,7 +33,7 @@ Contiene las entidades centrales del negocio y su comportamiento
 
 - `Pedido` (Abstracto) Define la estructura común para todos los tipos de pedidos. Proporciona un método abstracto para calcular el costo según el tipo.
   - `PedidoEstandar`, `PedidoExpress`, `PedidoProgramado` Implementan el cálculo específico del costo para cada tipo de envío.
-- `Transportista` (Interfaz) Define el comportamiento común para todos los transportistas.
+- `Transportista` (Abstracto) Define la estructura común para todos los transportistas.
   - `TransportistaInterno`, `TransportistaExterno` Implementan el comportamiento específico según el tipo de transportista.
 - `PedidoFactory` (Crea instancias de pedidos) Facilita la creación de diferentes tipos de pedidos.
 
@@ -54,7 +54,7 @@ Maneja la interacción con la base de datos y servicios externos.
 ### 1. Principio de Responsabilidad Única (SRP)
 
 - `Pedido`: Se enfoca únicamente en representar un pedido y su estado.
-- `ITransportista`: Se enfoca en gestionar la asignación y actualización de pedidos.
+- `Transportista`: Se enfoca en gestionar la asignación y actualización de pedidos.
 - `GestorPedidos`: Coordina operaciones con pedidos sin implementar directamente la persistencia.
 - `PedidoController`: Gestiona las solicitudes del usuario sin contener lógica de negocio.
 - `RepositorioPedidosDB`: Se encarga exclusivamente de la persistencia de datos.
@@ -65,7 +65,7 @@ Cada clase tiene una única razón para cambiar, cumpliendo así con el SRP.
 ### 2. Principio Abierto/Cerrado (OCP)
 
 - La clase abstracta `Pedido` permite crear nuevos tipos de pedidos (Estándar, Express, Programado) sin modificar el código existente.
-- La interfaz `ITransportista` permite agregar nuevos tipos de transportistas sin alterar el sistema.
+- La clase abstracta `Transportista` permite agregar nuevos tipos de transportistas sin alterar el sistema.
 - `PedidoFactory` facilita la creación de diferentes tipos de pedidos sin modificar el cliente.
 - La interfaz `IRepositorioPedidos` permite implementar diferentes mecanismos de persistencia sin cambiar la lógica de negocio.
 - La interfaz `IRepositorioTransportistas` permite implementar diferentes mecanismos de persistencia sin cambiar la lógica de negocio.
@@ -73,13 +73,11 @@ Cada clase tiene una única razón para cambiar, cumpliendo así con el SRP.
 ### 3. Principio de Sustitución de Liskov (LSP)
 
 - Las subclases de `Pedido` (PedidoEstandar, PedidoExpress, PedidoProgramado) pueden utilizarse donde se espera un objeto de tipo Pedido.
-- Las implementaciones de `ITransportista` (TransportistaInterno, TransportistaExterno) pueden ser utilizadas indistintamente.
 - Las implementaciones de `IRepositorioPedidos` pueden reemplazarse sin afectar el funcionamiento del sistema.
 - Las implementaciones de `IRepositorioTransportistas` pueden reemplazarse sin afectar el funcionamiento del sistema.
 
 ### 4. Principio de Segregación de Interfaces (ISP)
 
-- La interfaz `ITransportista` define solo los métodos necesarios para un transportista.
 - La interfaz `IRepositorioPedidos` incluye únicamente operaciones relacionadas con la persistencia de pedidos.
 - La interfaz `IRepositorioTransportistas` incluye únicamente operaciones relacionadas con la persistencia de transportistas.
 
@@ -96,7 +94,7 @@ Cada clase tiene una única razón para cambiar, cumpliendo así con el SRP.
 ### 1. Experto en Información (Information Expert)
 
 - `Pedido` conoce su propio estado y cómo calcular su costo.
-- `ITransportista` sabe cómo asignar y actualizar pedidos dentro de su capacidad.
+- `Transportista` sabe cómo asignar y actualizar pedidos dentro de su capacidad.
 - `AsignadorPedidos` tiene el conocimiento para determinar qué transportista es adecuado para un pedido.
 
 ### 2. Creador (Creator)
@@ -111,7 +109,7 @@ Cada clase tiene una única razón para cambiar, cumpliendo así con el SRP.
 
 ### 4. Bajo Acoplamiento (Low Coupling)
 
-- El uso de interfaces (`ITransportista`, `IRepositorioPedidos`, `IRepositorioTransportistas`) reduce el acoplamiento entre componentes.
+- El uso de interfaces (`IRepositorioPedidos`, `IRepositorioTransportistas`) reduce el acoplamiento entre componentes.
 - La estructura en capas minimiza las dependencias entre módulos.
 - El patrón Fábrica (`PedidoFactory`) reduce el acoplamiento entre el cliente y las clases concretas.
 
@@ -125,7 +123,6 @@ Cada clase tiene una única razón para cambiar, cumpliendo así con el SRP.
 ### 6. Polimorfismo (Polymorphism)
 
 - Las diferentes implementaciones de `Pedido` calculan su costo de manera específica.
-- Las implementaciones de `ITransportista` pueden tener comportamientos distintos al asignar pedidos.
 - La interfaz `IRepositorioPedidos` permite diferentes implementaciones de persistencia.
 - La interfaz `IRepositorioTransportistas` permite diferentes implementaciones de persistencia.
 
@@ -143,7 +140,7 @@ Cada clase tiene una única razón para cambiar, cumpliendo así con el SRP.
 
 ### 9. Variaciones Protegidas (Protected Variations)
 
-- Las interfaces `ITransportista` e `IRepositorioPedidos` protegen contra cambios en implementaciones.
+- Las interfaz `IRepositorioPedidos` protegen contra cambios en implementaciones.
 - La clase abstracta `Pedido` protege contra variaciones en los tipos de pedidos.
 
 ---
